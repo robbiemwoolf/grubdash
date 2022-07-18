@@ -24,6 +24,16 @@ function bodyHasData(propertyName) {
     };
 };
 
+function validPriceCheck() {
+    return function (req, res, next) {
+        const { data } = req.body;
+        if (data.price <= 0) {
+            return next();
+        }
+        next({ status: 400, message: "Dish must have a price that is an integer greater than 0"})
+    }
+}
+
 function create(req, res, next) {
     let lastDishId = dishes.reduce((maxId, dish) => Math.max(maxId, dish.id), 0);
     
@@ -58,6 +68,7 @@ module.exports = {
         bodyHasData('description'),
         bodyHasData('price'),
         bodyHasData('image_url'),
+        validPriceCheck,
         create,
     ],
     list,
